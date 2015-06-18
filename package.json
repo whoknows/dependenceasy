@@ -14,7 +14,7 @@
     },
     "dependenceasy": {
         "dependencies": {
-            "https://github.com/whoknows/SimpleTooltips": "#master"
+            "https://github.com/whoknows/SimpleTooltips.git": "#master"
         }
     },
     "keywords": [

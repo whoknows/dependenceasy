@@ -1,23 +1,37 @@
 #!/usr/bin/env node
 
 var program = require('commander');
-var _ = require('lodash');
-/*
 var exec = require('child_process').exec;
-var child = exec('ls -a | grep ' + searchPattern, function (err, stdout, stderr) {
-    console.log(stdout);
-});
-*/
+var fs = require('fs');
+var _ = require('lodash');
+
+var modulesDir = process.cwd() + '/dependenceasy_modules';
+
+program
+    .version('0.0.1')
+    .command('install [package] [version]')
+    .description('install all or one specific package(s)')
+    .action(function (packageToInstall, version) {
+        createDirIfNotExists(modulesDir);
+
+        if (packageToInstall) {
+            installSpecificPackage(packageToInstall, version);
+        } else {
+            console.log('Install from package.json');
+            installFromPackageJSON();
+        }
+    });
+
+program.parse(process.argv);
 
 function getDependenciesFromPackageJSON() {
-    var packageJSON = require('../package.json');
+    var packageJSON = require(process.cwd() + '/package.json');
     var dependencies = _.get(packageJSON, 'dependenceasy.dependencies');
 
     if (dependencies) {
         return dependencies;
     } else {
         return {};
-        console.log("Dependenceasy > dependencies not found in package.json");
     }
 }
 
@@ -28,20 +42,18 @@ function installFromPackageJSON() {
 }
 
 function installSpecificPackage(packageToInstall, version) {
-    console.log(' => ', packageToInstall, version);
-}
+    var moduleDir = modulesDir + '/' + packageToInstall.match(/\/([A-Za-z0-9]*)\.git/)[1];
+    createDirIfNotExists(moduleDir);
 
-program
-    .version('0.0.1')
-    .command('install [package] [version]')
-    .description('install all or one specific package(s)')
-    .action(function (packageToInstall, version) {
-        if (packageToInstall) {
-            installSpecificPackage(packageToInstall, version);
-        } else {
-            console.log('Install from package.json');
-            installFromPackageJSON();
+    exec('git clone ' + packageToInstall + ' ' + moduleDir, function (error, stdout, stderr) {
+        if (error !== null) {
+            console.log('git clone error: ' + error);
         }
     });
+}
 
-program.parse(process.argv);
+function createDirIfNotExists(dir) {
+    if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir);
+    }
+}
