@@ -7,7 +7,7 @@
     "bin": "bin/dependenceasy.js",
     "repository": {
         "type": "git",
-        "url": "https://github.com/whoknows/dependenceasy"
+        "url": "git://github.com/whoknows/dependenceasy.git"
     },
     "dependencies": {
         "commander": "~2.8.1",
