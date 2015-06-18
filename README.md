@@ -2,8 +2,8 @@
 Easy way to manage javascript dependencies.
 
 Goal :
- - only github url dependecies
+ - only github url dependencies
  - version or branch
- - git clone to install dependecy (to be able to develop inside the installed dependecies)
- - multiples files for differents environnements (depencies.prod.json, depencies.dev.json, etc.)
- - recurcive dependency management (for later)
+ - git clone to install dependency (to be able to develop inside the installed dependencies)
+ - multiples files for differents environments (dependencies.prod.json, dependencies.dev.json, etc.)
+ - recursive dependency management (for later)
