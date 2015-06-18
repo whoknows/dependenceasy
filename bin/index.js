@@ -7,22 +7,41 @@ var _ = require('lodash');
 
 var modulesDir = process.cwd() + '/dependenceasy_modules';
 
+/********************************************************/
+/*************** Commands configuration *****************/
+/********************************************************/
+
 program
     .version('0.0.1')
     .command('install [package] [version]')
     .description('install all or one specific package(s)')
-    .action(function (packageToInstall, version) {
-        createDirIfNotExists(modulesDir);
+    .action(actionInstall);
 
-        if (packageToInstall) {
-            installSpecificPackage(packageToInstall, version);
-        } else {
-            console.log('Install from package.json');
-            installFromPackageJSON();
-        }
-    });
+program
+    .command('clean')
+    .description('clean install directory')
+    .action(actionClean);
 
 program.parse(process.argv);
+
+function actionInstall(packageToInstall, version) {
+    createDirIfNotExists(modulesDir);
+
+    if (packageToInstall) {
+        installSpecificPackage(packageToInstall, version);
+    } else {
+        console.log('Install from package.json');
+        installFromPackageJSON();
+    }
+}
+
+function actionClean() {
+    exec('rm -rf ' + modulesDir + '/*', function (error, stdout, stderr) {
+        if (error !== null) {
+            console.log('git clone error: ' + error);
+        }
+    });
+}
 
 function getDependenciesFromPackageJSON() {
     var packageJSON = require(process.cwd() + '/package.json');
@@ -45,11 +64,23 @@ function installSpecificPackage(packageToInstall, version) {
     var moduleDir = modulesDir + '/' + packageToInstall.match(/\/([A-Za-z0-9]*)\.git/)[1];
     createDirIfNotExists(moduleDir);
 
-    exec('git clone ' + packageToInstall + ' ' + moduleDir, function (error, stdout, stderr) {
+    var cmd = getCommandDependingOnRequiredVersion(version) + ' ' + packageToInstall + ' ' + moduleDir;
+
+    console.log(cmd);
+
+    exec(cmd, function (error, stdout, stderr) {
         if (error !== null) {
             console.log('git clone error: ' + error);
         }
     });
+}
+
+function getCommandDependingOnRequiredVersion(version) {
+    if (version) {
+        return 'git clone -b ' + version + ' --single-branch';
+    }
+
+    return 'git clone';
 }
 
 function createDirIfNotExists(dir) {
