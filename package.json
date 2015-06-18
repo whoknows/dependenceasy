@@ -3,7 +3,8 @@
     "version": "0.0.1",
     "description": "An example module to illustrate the usage of a package.json",
     "author": "Guillaume Coste <guillaume.coste@gmail.com>",
-    "main": "src/index.js",
+    "main": "index.js",
+    "bin": "bin/dependenceasy.js",
     "repository": {
         "type": "git",
         "url": "https://github.com/whoknows/dependenceasy"

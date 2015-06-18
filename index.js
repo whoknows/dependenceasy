@@ -1,42 +1,8 @@
-#!/usr/bin/env node
-
-var program = require('commander');
 var exec = require('child_process').exec;
 var fs = require('fs');
 var _ = require('lodash');
 
 var modulesDir = process.cwd() + '/dependenceasy_modules';
-
-/********************************************************/
-/*************** Commands configuration *****************/
-/********************************************************/
-
-program
-    .version('0.0.1')
-    .command('install [package] [version]')
-    .description('install all or one specific package(s)')
-    .action(actionInstall);
-
-program
-    .command('clean')
-    .description('clean install directory')
-    .action(actionClean);
-
-program.parse(process.argv);
-
-function actionInstall(packageToInstall, version) {
-    createDirIfNotExists(modulesDir);
-
-    if (packageToInstall) {
-        installSpecificPackage(packageToInstall, version);
-    } else {
-        installFromPackageJSON();
-    }
-}
-
-function actionClean() {
-    removeDirectoryContent(modulesDir);
-}
 
 function getDependenciesFromPackageJSON() {
     var packageJSON = require(process.cwd() + '/package.json');
@@ -75,6 +41,14 @@ function installSpecificPackage(packageToInstall, version) {
     });
 }
 
+function installRecurciveDependencies() {
+    //
+}
+
+/********************************************************/
+/****************** Utility functions *******************/
+/********************************************************/
+
 function getCommandDependingOnRequiredVersion(version) {
     if (version) {
         return 'git clone -b ' + version + ' --single-branch';
@@ -100,3 +74,14 @@ function createDirIfNotExists(dir) {
 
     return true;
 }
+
+module.exports = {
+    modulesDir: modulesDir,
+    getDependenciesFromPackageJSON: getDependenciesFromPackageJSON,
+    installFromPackageJSON: installFromPackageJSON,
+    installSpecificPackage: installSpecificPackage,
+    installRecurciveDependencies: installRecurciveDependencies,
+    getCommandDependingOnRequiredVersion: getCommandDependingOnRequiredVersion,
+    removeDirectoryContent: removeDirectoryContent,
+    createDirIfNotExists: createDirIfNotExists
+};
