@@ -9,7 +9,13 @@
         "url": "https://github.com/whoknows/dependenceasy"
     },
     "dependencies": {
-        "commander": "~2.8.1"
+        "commander": "~2.8.1",
+        "lodash": "~3.9.3"
+    },
+    "dependenceasy": {
+        "dependencies": {
+            "https://github.com/whoknows/SimpleTooltips": "#master"
+        }
     },
     "keywords": [
         "dependency",
