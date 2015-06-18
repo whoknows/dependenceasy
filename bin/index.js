@@ -30,17 +30,12 @@ function actionInstall(packageToInstall, version) {
     if (packageToInstall) {
         installSpecificPackage(packageToInstall, version);
     } else {
-        console.log('Install from package.json');
         installFromPackageJSON();
     }
 }
 
 function actionClean() {
-    exec('rm -rf ' + modulesDir + '/*', function (error, stdout, stderr) {
-        if (error !== null) {
-            console.log('git clone error: ' + error);
-        }
-    });
+    removeDirectoryContent(modulesDir);
 }
 
 function getDependenciesFromPackageJSON() {
@@ -55,6 +50,8 @@ function getDependenciesFromPackageJSON() {
 }
 
 function installFromPackageJSON() {
+    console.log('Install from package.json');
+
     _.each(getDependenciesFromPackageJSON(), function (version, github) {
         installSpecificPackage(github, version);
     });
@@ -62,7 +59,10 @@ function installFromPackageJSON() {
 
 function installSpecificPackage(packageToInstall, version) {
     var moduleDir = modulesDir + '/' + packageToInstall.match(/\/([A-Za-z0-9]*)\.git/)[1];
-    createDirIfNotExists(moduleDir);
+
+    if (createDirIfNotExists(moduleDir)) {
+        removeDirectoryContent(moduleDir);
+    }
 
     var cmd = getCommandDependingOnRequiredVersion(version) + ' ' + packageToInstall + ' ' + moduleDir;
 
@@ -83,8 +83,20 @@ function getCommandDependingOnRequiredVersion(version) {
     return 'git clone';
 }
 
+function removeDirectoryContent(dir) {
+    exec('rm -rf ' + dir + '/*', function (error, stdout, stderr) {
+        if (error !== null) {
+            console.log('git clone error: ' + error);
+        }
+    });
+}
+
 function createDirIfNotExists(dir) {
     if (!fs.existsSync(dir)) {
         fs.mkdirSync(dir);
+
+        return false;
     }
+
+    return true;
 }
