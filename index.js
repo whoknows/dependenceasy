@@ -1,4 +1,5 @@
 var exec = require('child_process').exec;
+var execSync = require('child_process').execSync;
 var fs = require('fs');
 var _ = require('lodash');
 
@@ -27,7 +28,8 @@ function installSpecificPackage(packageToInstall, version) {
     var moduleDir = modulesDir + '/' + packageToInstall.match(/\/([A-Za-z0-9]*)\.git/)[1];
 
     if (createDirIfNotExists(moduleDir)) {
-        removeDirectoryContent(moduleDir);
+        //removeDirectoryContent(moduleDir);
+        execSync('rm -rf ' + moduleDir + '/*');
     }
 
     var cmd = getCommandDependingOnRequiredVersion(version) + ' ' + packageToInstall + ' ' + moduleDir;
@@ -38,11 +40,16 @@ function installSpecificPackage(packageToInstall, version) {
         if (error !== null) {
             console.log('git clone error: ' + error);
         }
+        installRecurciveDependencies(moduleDir);
     });
 }
 
-function installRecurciveDependencies() {
-    //
+function installRecurciveDependencies(moduleDir) {
+    fs.readdirSync(moduleDir, function (err, files) {
+        _.each(files, function (file) {
+            console.log(file);
+        });
+    });
 }
 
 /********************************************************/
@@ -58,11 +65,7 @@ function getCommandDependingOnRequiredVersion(version) {
 }
 
 function removeDirectoryContent(dir) {
-    exec('rm -rf ' + dir + '/*', function (error, stdout, stderr) {
-        if (error !== null) {
-            console.log('git clone error: ' + error);
-        }
-    });
+    execSync('rm -rf ' + dir + '/*');
 }
 
 function createDirIfNotExists(dir) {
