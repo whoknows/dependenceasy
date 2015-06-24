@@ -15,8 +15,7 @@
     },
     "dependenceasy": {
         "dependencies": {
-            "https://github.com/whoknows/SimpleTooltips.git": "master",
-            "git@git.livingobjects.com:archipelv4/batchalert.git": "v1.0.0"
+            "git@git.livingobjects.com:prolo/module-cos.git": "develop"
         }
     },
     "keywords": [

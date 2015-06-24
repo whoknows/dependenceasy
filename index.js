@@ -25,7 +25,7 @@ function installFromPackageJSON() {
 }
 
 function installSpecificPackage(packageToInstall, version) {
-    var moduleDir = modulesDir + '/' + packageToInstall.match(/\/([A-Za-z0-9]*)\.git/)[1];
+    var moduleDir = modulesDir + '/' + packageToInstall.match(/\/([\w\d-]*)\.git/)[1];
 
     if (createDirIfNotExists(moduleDir)) {
         //removeDirectoryContent(moduleDir);
